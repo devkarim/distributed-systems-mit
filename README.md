@@ -14,6 +14,12 @@ Solutions for [MIT 6.5840](https://pdos.csail.mit.edu/6.5840/) labs in Go.
 
 ## MapReduce
 
+![MapReduce flow](docs/mapreduce.gif)
+
+Workers ask the coordinator for tasks. Maps write `mr-X-Y.json`; after
+all maps finish, reduces read those and write `mr-out-Y`. Timed-out
+tasks are retried by another worker.
+
 ```bash
 cd src
 make mr                  # full test suite
@@ -30,3 +36,16 @@ Manual run (debug logs on by default):
 Unset `MR_DEBUG` to silence logs: `MR_DEBUG= ./run-mr.sh`.
 
 On macOS, plugins are built with `-ldflags=-w` so dyld can load them.
+
+### Re-render the animation
+
+Uses [Manim Community](https://www.manim.community/) (`docs/manim/mapreduce.py`):
+
+```bash
+pyenv shell manim-env   # or any env with manim installed
+cd docs/manim
+manim -ql --format=gif -o mapreduce mapreduce.py MapReduceFlow
+cp media/videos/mapreduce/480p15/mapreduce.gif ../mapreduce.gif
+```
+
+Use `-qm` instead of `-ql` for a sharper GIF.

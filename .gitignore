@@ -5,3 +5,7 @@ pkg/
 mr-out*
 mr-tmp-*/
 mr-*-*.json
+
+# Manim build cache (keep docs/mapreduce.gif)
+docs/manim/media/
+docs/manim/__pycache__/
