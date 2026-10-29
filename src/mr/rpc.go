@@ -6,18 +6,50 @@ package mr
 // remember to capitalize all names.
 //
 
-//
-// example to show how to declare the arguments
-// and reply for an RPC.
-//
+type TaskType string
 
-type ExampleArgs struct {
-	X int
+const (
+	MAP    TaskType = "MAP"
+	REDUCE TaskType = "REDUCE"
+)
+
+type Phase string
+
+const (
+	MAP_PHASE    Phase = "MAP"
+	REDUCE_PHASE Phase = "REDUCE"
+	DONE_PHASE   Phase = "DONE"
+)
+
+type Task struct {
+	Id        int
+	Type      TaskType
+	isRunning bool
+	finished  bool
+	InputFile string
+	phase     Phase
 }
 
-type ExampleReply struct {
-	Y int
+type InitWorkerArgs struct {
 }
 
-// Add your RPC definitions here.
+type InitWorkerReply struct {
+	Id int
+}
 
+type RequestTaskArgs struct {
+}
+
+type RequestTaskReply struct {
+	Found   bool
+	Done    bool
+	Task    *Task
+	NReduce int
+}
+
+type FinishTaskArgs struct {
+	Id int
+}
+
+type FinishTaskReply struct {
+}
