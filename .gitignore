@@ -1,2 +1,7 @@
 pkg/
 *-handin.tar.gz
+
+# MapReduce run/test artifacts
+mr-out*
+mr-tmp-*/
+mr-*-*.json

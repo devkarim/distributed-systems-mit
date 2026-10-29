@@ -1,5 +1,11 @@
 *.*/
 main/mr-tmp/
+mr-tmp-*/
+**/mr-tmp-*/
+mr-out*
+**/mr-out*
+mr-*-*.json
+**/mr-*-*.json
 mrtmp.*
 824-mrinput-*.txt
 /main/diff.out
