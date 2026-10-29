@@ -10,6 +10,11 @@
 VERB=-v
 RACE=-race
 VER=$(shell go version | grep -q 'go1.17.[012345]'; echo $$?)
+# macOS 27+ dyld rejects Go plugins with mismatched chained-fixup seg_count.
+# -w strips DWARF so the segment count stays consistent (see run-mr.sh).
+ifeq ($(shell uname -s),Darwin)
+PLUGIN_LDFLAGS=-ldflags=-w
+endif
 
 MAINS=kvsrv1 raft1 kvraft1
 MAIN_BUILDS=$(addsuffix -build, $(MAINS))
@@ -47,14 +52,14 @@ mr-build: .FORCE check-version
 	go build $(RACE) -o main/mrsequential main/mrsequential.go
 	go build $(RACE) -o main/mrcoordinator main/mrcoordinator.go
 	go build $(RACE) -o main/mrworker main/mrworker.go&
-	(cd mrapps && go build $(RACE) -buildmode=plugin wc.go) || exit 1
-	(cd mrapps && go build $(RACE) -buildmode=plugin indexer.go) || exit 1
-	(cd mrapps && go build $(RACE) -buildmode=plugin mtiming.go) || exit 1
-	(cd mrapps && go build $(RACE) -buildmode=plugin rtiming.go) || exit 1
-	(cd mrapps && go build $(RACE) -buildmode=plugin jobcount.go) || exit 1
-	(cd mrapps && go build $(RACE) -buildmode=plugin early_exit.go) || exit 1
-	(cd mrapps && go build $(RACE) -buildmode=plugin crash.go) || exit 1
-	(cd mrapps && go build $(RACE) -buildmode=plugin nocrash.go) || exit 1
+	(cd mrapps && go build $(RACE) $(PLUGIN_LDFLAGS) -buildmode=plugin wc.go) || exit 1
+	(cd mrapps && go build $(RACE) $(PLUGIN_LDFLAGS) -buildmode=plugin indexer.go) || exit 1
+	(cd mrapps && go build $(RACE) $(PLUGIN_LDFLAGS) -buildmode=plugin mtiming.go) || exit 1
+	(cd mrapps && go build $(RACE) $(PLUGIN_LDFLAGS) -buildmode=plugin rtiming.go) || exit 1
+	(cd mrapps && go build $(RACE) $(PLUGIN_LDFLAGS) -buildmode=plugin jobcount.go) || exit 1
+	(cd mrapps && go build $(RACE) $(PLUGIN_LDFLAGS) -buildmode=plugin early_exit.go) || exit 1
+	(cd mrapps && go build $(RACE) $(PLUGIN_LDFLAGS) -buildmode=plugin crash.go) || exit 1
+	(cd mrapps && go build $(RACE) $(PLUGIN_LDFLAGS) -buildmode=plugin nocrash.go) || exit 1
 
 .PHONY: .FORCE $(MAINS) $(MAIN_BUILDS)
 
