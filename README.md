@@ -14,11 +14,11 @@ Solutions for [MIT 6.5840](https://pdos.csail.mit.edu/6.5840/) labs in Go.
 
 ## MapReduce
 
-![MapReduce flow](docs/mapreduce.gif)
+![MapReduce word-count walkthrough](docs/mapreduce.gif)
 
-Workers ask the coordinator for tasks. Maps write `mr-X-Y.json`; after
-all maps finish, reduces read those and write `mr-out-Y`. Timed-out
-tasks are retried by another worker.
+Example walkthrough: two tiny files → map to `(word, 1)` pairs →
+partition by `ihash % 2` into `mr-*-Y.json` → reduce to `mr-out-Y`
+(`hello 2`, `world 1`, `map 1`). Same flow as the lab, just smaller.
 
 ```bash
 cd src
