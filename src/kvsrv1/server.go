@@ -18,21 +18,19 @@ func DPrintf(format string, a ...interface{}) (n int, err error) {
 	return
 }
 
-type Record struct {
-	Value   string
-	Version rpc.Tversion
+type record struct {
+	value   string
+	version rpc.Tversion
 }
-
-type KVMap map[string]Record
 
 type KVServer struct {
 	mu    sync.Mutex
-	store KVMap
+	store map[string]record
 }
 
 func MakeKVServer() *KVServer {
 	kv := &KVServer{
-		store: make(map[string]Record),
+		store: make(map[string]record),
 	}
 
 	return kv
@@ -44,14 +42,14 @@ func (kv *KVServer) Get(args *rpc.GetArgs, reply *rpc.GetReply) {
 	kv.mu.Lock()
 	defer kv.mu.Unlock()
 
-	record, exists := kv.store[args.Key]
+	rec, exists := kv.store[args.Key]
 	if !exists {
 		reply.Err = rpc.ErrNoKey
 		return
 	}
 
-	reply.Value = record.Value
-	reply.Version = record.Version
+	reply.Value = rec.value
+	reply.Version = rec.version
 	reply.Err = rpc.OK
 }
 
@@ -63,25 +61,18 @@ func (kv *KVServer) Put(args *rpc.PutArgs, reply *rpc.PutReply) {
 	kv.mu.Lock()
 	defer kv.mu.Unlock()
 
-	record, exists := kv.store[args.Key]
+	rec, exists := kv.store[args.Key]
 	if !exists && args.Version != 0 {
 		reply.Err = rpc.ErrNoKey
 		return
 	}
 
-	if !exists {
-		record = Record{Value: args.Value, Version: args.Version}
-	}
-
-	if record.Version != args.Version {
+	if rec.version != args.Version {
 		reply.Err = rpc.ErrVersion
 		return
 	}
 
-	record.Value = args.Value
-	record.Version += 1
-
-	kv.store[args.Key] = record
+	kv.store[args.Key] = record{value: args.Value, version: args.Version + 1}
 	reply.Err = rpc.OK
 }
 
