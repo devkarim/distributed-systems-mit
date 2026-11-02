@@ -1,5 +1,6 @@
 pkg/
 *-handin.tar.gz
+.DS_Store
 
 # MapReduce run/test artifacts
 mr-out*
