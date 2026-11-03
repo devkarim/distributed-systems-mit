@@ -17,7 +17,7 @@ type Lock struct {
 	clientId string
 }
 
-const SLEEP_TIME = time.Millisecond * 100
+const sleepTime = time.Millisecond * 100
 
 // The tester calls MakeLock() and passes in a k/v clerk; your code can
 // perform a Put or Get by calling lk.ck.Put() or lk.ck.Get().
@@ -39,14 +39,14 @@ func (lk *Lock) Acquire() {
 		}
 		// acquired by someone else
 		if value != "" {
-			time.Sleep(SLEEP_TIME)
+			time.Sleep(sleepTime)
 			continue
 		}
 		// free (missing or empty): try to claim
 		if lk.ck.Put(lk.lockname, lk.clientId, version) == rpc.OK {
 			return
 		}
-		time.Sleep(SLEEP_TIME)
+		time.Sleep(sleepTime)
 	}
 }
 
@@ -59,6 +59,6 @@ func (lk *Lock) Release() {
 		if lk.ck.Put(lk.lockname, "", version) == rpc.OK {
 			return
 		}
-		time.Sleep(SLEEP_TIME)
+		time.Sleep(sleepTime)
 	}
 }
