@@ -7,7 +7,7 @@ Solutions for [MIT 6.5840](https://pdos.csail.mit.edu/6.5840/) labs in Go.
 | Lab | Directory | Status |
 |-----|-----------|--------|
 | MapReduce | `src/mr` | Done |
-| Key/Value Server | `src/kvsrv1` | — |
+| Key/Value Server | `src/kvsrv1` | Done |
 | Raft | `src/raft1` | — |
 | Fault-tolerant KV | `src/kvraft1` | — |
 | Sharded KV | `src/shardkv1` | — |
@@ -49,3 +49,27 @@ cp media/videos/mapreduce/480p15/mapreduce.gif ../mapreduce.gif
 ```
 
 Use `-qm` instead of `-ql` for a sharper GIF.
+
+## Key/Value Server
+
+![KV server versioned Put and ErrMaybe](docs/kvsrv1.gif)
+
+Single-server linearizable KV with versioned conditional `Put`. Clerk
+retries forever on dropped RPCs; a retransmitted `Put` that gets
+`ErrVersion` returns `ErrMaybe` because the first attempt may already
+have succeeded. Lock is CAS on a lock key via `Get`/`Put`.
+
+```bash
+cd src
+make kvsrv1              # KV tests (reliable + unreliable)
+make lock1               # lock tests (reliable + unreliable)
+```
+
+### Re-render the animation
+
+```bash
+pyenv shell manim-env   # or any env with manim installed
+cd docs/manim
+manim -ql --format=gif -o kvsrv1 kvsrv1.py KVServerFlow
+cp media/videos/kvsrv1/480p15/kvsrv1.gif ../kvsrv1.gif
+```

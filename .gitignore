@@ -7,6 +7,6 @@ mr-out*
 mr-tmp-*/
 mr-*-*.json
 
-# Manim build cache (keep docs/mapreduce.gif)
+# Manim build cache (keep docs/*.gif)
 docs/manim/media/
 docs/manim/__pycache__/
